@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WEB-Kỉ niệm</title>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Patrick Hand', cursive;
+        }
+        .journal-page {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background-color: #fdfbf7;
+            background-image: 
+                linear-gradient(90deg, transparent 79px, #ab4747 79px, #ab4747 81px, transparent 81px),
+                linear-gradient(#e1e8ed 1px, transparent 1px);
+            background-size: 100% 100%, 100% 2rem; 
+            background-position: 0 0, 0 1rem;     
+            padding: 30px 480px 30px 110px; 
+            overflow: hidden;
+        }
+
+        /* KHUNG NHẬP MẬT KHẨU VIỀN CẦU VỒNG PHÁT SÁNG */
+        .pass-box-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-top: 40px;
+            z-index: 5;
+            border-radius: 20px;
+            padding: 3px;
+            background: linear-gradient(60deg, #ff9a9e, #fecfef, #a1c4fd, #c2e9fb, #ff9a9e);
+            background-size: 300% 300%;
+            animation: animatedGlow 4s ease infinite;
+            box-shadow: 0 10px 25px rgba(255, 154, 158, 0.35);
+        }
+
+        @keyframes animatedGlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .pass-box {
+            background: rgba(253, 251, 247, 0.95);
+            backdrop-filter: blur(8px);
+            padding: 22px 30px;
+            border-radius: 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+        .pass-box h3 {
+            font-size: 1.45rem;
+            color: #d63031;
+            font-family: 'Patrick Hand', cursive;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .pass-box input {
+            padding: 8px 16px;
+            border: 1.5px solid #ff9a9e;
+            border-radius: 20px;
+            outline: none;
+            text-align: center;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            color: #e84393;
+            background: #fff;
+            transition: all 0.3s;
+        }
+        .pass-box input:focus {
+            border-color: #a1c4fd;
+            box-shadow: 0 0 8px rgba(161, 196, 253, 0.6);
+        }
+        .pass-box button {
+            background: linear-gradient(45deg, #ff7675, #e84393);
+            color: white;
+            border: none;
+            padding: 7px 22px;
+            border-radius: 20px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(232, 67, 147, 0.3);
+            transition: all 0.2s;
+        }
+        .pass-box button:hover {
+            transform: scale(1.06);
+            box-shadow: 0 6px 15px rgba(232, 67, 147, 0.45);
+        }
+        .error-msg {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            display: none;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* --- CHỮ & HIỆU ỨNG TRANG 1 --- */
+        .typewriter-container {
+            display: none;
+            position: relative;
+            z-index: 2;
+            transform: translateY(-30px);
+        }
+        .typewriter-container.active {
+            display: block;
+        }
+
+        .typewriter-text {
+            font-size: 1.25rem;         
+            line-height: 2rem;     
+            color: #1a2a3a;         
+            white-space: pre-wrap;    
+        }
+
+        /* --- NỘI DUNG TRANG 2 --- */
+        .journal-page-2 {
+            display: none; 
+            position: relative;
+            z-index: 2;
+            width: 100%; 
+        }
+        .journal-page-2 .typewriter-text {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* KHUNG GỬI HỒI ÂM DẠNG OVERLAY NỔI Ở GIỮA MÀN HÌNH */
+        .reply-box-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+            animation: fadeIn 0.3s ease forwards;
+        }
+        .reply-box {
+            background: rgba(253, 251, 247, 0.98);
+            backdrop-filter: blur(8px);
+            padding: 24px 28px;
+            border-radius: 20px;
+            border: 2px dashed #ff9a9e;
+            width: 90%;
+            max-width: 440px;
+            box-shadow: 0 15px 35px rgba(255, 154, 158, 0.4);
+            text-align: center;
+        }
+        .reply-box h4 {
+            font-family: 'Patrick Hand', cursive;
+            font-size: 1.4rem;
+            color: #d63031;
+            margin-bottom: 12px;
+        }
+        .reply-box textarea {
+            width: 100%;
+            height: 110px;
+            padding: 10px;
+            border: 1.5px solid #ff9a9e;
+            border-radius: 14px;
+            outline: none;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            color: #333;
+            resize: none;
+            background: #fff;
+        }
+        .reply-box textarea:focus {
+            border-color: #a1c4fd;
+            box-shadow: 0 0 8px rgba(161, 196, 253, 0.6);
+        }
+        .reply-box button {
+            margin-top: 12px;
+            background: linear-gradient(45deg, #ff7675, #e84393);
+            color: white;
+            border: none;
+            padding: 8px 22px;
+            border-radius: 20px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(232, 67, 147, 0.3);
+            transition: all 0.2s;
+        }
+        .reply-box button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(232, 67, 147, 0.45);
+        }
+
+        .success-area {
+            display: none;
+            margin-top: 10px;
+        }
+        .success-msg {
+            color: #27ae60;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .back-letter-btn {
+            background: linear-gradient(45deg, #a1c4fd, #c2e9fb);
+            color: #2d3436;
+            border: none;
+            padding: 7px 18px;
+            border-radius: 20px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(161, 196, 253, 0.4);
+            transition: all 0.2s;
+        }
+        .back-letter-btn:hover {
+            transform: scale(1.05);
+            background: linear-gradient(45deg, #8ec5fc, #e0c3fc);
+        }
+
+        .couple-sticker {
+            position: absolute;
+            bottom: 0px;            
+            left: 470px;            
+            width: 500px;            
+            height: auto;
+            z-index: 10;            
+            pointer-events: none;
+            mix-blend-mode: multiply; 
+            filter: contrast(110%);  
+            clip-path: inset(0% 0% 15% 0%); 
+        }
+
+        /* CỤM BÊN PHẢI */
+        .right-section {
+            position: absolute;
+            top: 50%;
+            right: 50px;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 22px;
+            z-index: 2;
+        }
+
+        /* LƯỚI GHÉP ẢNH TRÁI TIM THẲNG HÀNG */
+        .heart-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 54px);
+            grid-template-rows: repeat(5, 54px);
+            gap: 4px;
+            padding: 5px;
+        }
+
+        .polaroid-card {
+            width: 100%;
+            height: 100%;
+            background: #ffffff; 
+            padding: 3px;         
+            border-radius: 5px;   
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            z-index: 1;
+            transform: none !important;
+        }
+
+        .polaroid-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 3px;  
+            display: block;
+        }
+
+        .img-1  { grid-column: 2; grid-row: 1; }
+        .img-2  { grid-column: 4; grid-row: 1; }
+        .img-3  { grid-column: 1; grid-row: 2; }
+        .img-4  { grid-column: 2; grid-row: 2; }
+        .img-5  { grid-column: 3; grid-row: 2; }
+        .img-6  { grid-column: 4; grid-row: 2; }
+        .img-7  { grid-column: 5; grid-row: 2; }
+        .img-8  { grid-column: 1; grid-row: 3; }
+        .img-9  { grid-column: 2; grid-row: 3; }
+        .img-10 { grid-column: 3; grid-row: 3; }
+        .img-11 { grid-column: 4; grid-row: 3; }
+        .img-12 { grid-column: 5; grid-row: 3; }
+        .img-13 { grid-column: 2; grid-row: 4; }
+        .img-14 { grid-column: 3; grid-row: 4; }
+        .img-15 { grid-column: 4; grid-row: 4; }
+        .img-16 { grid-column: 3; grid-row: 5; }
+
+        .polaroid-card:hover {
+            transform: scale(1.3) !important;
+            z-index: 20;
+            box-shadow: 0 0 12px 3px rgba(255, 118, 117, 0.8), 
+                        0 0 22px 6px rgba(232, 67, 147, 0.5);
+        }
+
+        /* ĐẾM THỜI GIAN */
+        .time-counter-widget {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            background: rgba(253, 251, 247, 0.65); 
+            padding: 12px 18px;
+            border-radius: 18px;
+            border: 1px dashed rgba(163, 136, 238, 0.4);
+            backdrop-filter: blur(4px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        }
+
+        .counter-boxes {
+            display: flex;
+            gap: 8px;
+        }
+
+        .box {
+            background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            width: 60px;
+            height: 62px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(142, 197, 252, 0.4);
+            transition: transform 0.2s;
+        }
+        .box:hover {
+            transform: translateY(-3px);
+        }
+        .box .num {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            line-height: 1;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .box .label {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.5rem;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.95);
+            color: #8a2be2;
+            padding: 2px 6px;
+            border-radius: 8px;
+            margin-top: 4px;
+            text-transform: uppercase;
+        }
+
+        .hms-counter {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #ff7675;
+            margin-top: 4px;
+        }
+
+        .start-date-tag {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: #d63031;
+            background: #ffeaa7;
+            padding: 1px 6px;
+            border-radius: 8px;
+            border: 1px dashed #ff7675;
+            margin-right: 3px;
+        }
+
+        .circle-num {
+            background-color: #ffdae0;
+            color: #e84393;
+            border: 1.5px solid #ff7675;
+            border-radius: 12px;
+            padding: 1px 6px;
+            font-size: 0.75rem;
+            display: inline-block;
+            box-shadow: 0 1px 4px rgba(255, 118, 117, 0.2);
+        }
+
+        /* NÚT NHẠC, NÚT TRANG & DÒNG PHẢN HỒI NẰM CỐ ĐỊNH GÓC DƯỚI BÊN TRÁI */
+        .bottom-left-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 25;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .music-btn {
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 30px;
+            padding: 8px 16px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.85rem;
+            color: #a388ee;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: transform 0.2s;
+        }
+        .music-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .hand-btn {
+            background: #ffffff;
+            border: 1.5px solid #ffd1dc;
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .hand-btn:hover {
+            transform: scale(1.15);
+            background: #fff0f3;
+            border-color: #ff9a9e;
+            box-shadow: 0 0 15px rgba(255, 154, 158, 0.8), 
+                        0 0 25px rgba(254, 207, 239, 0.6);
+        }
+
+        /* DÒNG PHẢN HỒI GẮN CỐ ĐỊNH CẠNH NÚT BẤM GÓC DƯỚI BÊN TRÁI */
+        .reply-trigger-wrapper {
+            display: none; /* Mặc định ẩn, sẽ hiện khi gõ xong trang 1 hoặc chuyển sang trang 2 */
+            animation: fadeIn 0.5s ease forwards;
+        }
+        .reply-trigger-text {
+            font-size: 1.05rem;
+            color: #d63031;
+            cursor: pointer;
+            display: inline-block;
+            padding: 7px 16px;
+            background: #ffe5ec; 
+            border: 1.5px dashed #ff9a9e;
+            border-radius: 20px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px rgba(255, 154, 158, 0.25);
+            font-family: 'Patrick Hand', cursive;
+        }
+        .reply-trigger-text:hover {
+            transform: scale(1.05);
+            background: #ffc2d1; 
+        }
+
+        /* TRÁI TIM RƠI */
+        .falling-heart {
+            position: fixed;
+            top: -20px;
+            color: #ff7675;
+            font-size: 1rem;
+            pointer-events: none;
+            z-index: 1;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* MODAL PHÓNG TO ẢNH */
+        .image-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(5px);
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .image-modal.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-content {
+            position: relative;
+            max-width: 85vw;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+        }
+        .image-modal.open .modal-content {
+            transform: scale(1);
+        }
+        .modal-img {
+            max-width: 80vw;
+            max-height: 75vh;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            border: 4px solid #ffffff;
+            object-fit: contain;
+        }
+        .modal-close {
+            position: absolute;
+            top: -45px;
+            right: 0;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            font-family: Arial, sans-serif;
+            background: rgba(255, 255, 255, 0.2);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .modal-close:hover {
+            background: #ff7675;
+        }
+        .modal-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 2.5rem;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.2);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            transition: background 0.2s;
+        }
+        .modal-nav:hover {
+            background: #e84393;
+        }
+        .modal-prev { left: -60px; }
+        .modal-next { right: -60px; }
+    </style>
+</head>
+<body>
+    <div class="journal-page">
+        <!-- KHUNG NHẬP MẬT KHẨU VIỀN PHÁT SÁNG -->
+        <div class="pass-box-wrapper" id="password-container">
+            <div class="pass-box">
+                <h3>🔒 Nhập mật khẩu đi công chúa 👰</h3>
+                <input type="password" id="pass-input" placeholder="Nhập mật khẩu..." onkeypress="handleKeyPress(event)">
+                <button onclick="checkPassword()">Mở thư 💌</button>
+                <span class="error-msg" id="error-msg">Mật khẩu chưa đúng rồi bé ơi!</span>
+            </div>
+        </div>
+
+        <!-- NỘI DUNG THƯ -->
+        <div class="typewriter-container" id="typewriter-container">
+            <!-- TRANG 1: CHỮ CHẠY -->
+            <span class="typewriter-text" id="typed-text"></span>
+            
+            <!-- TRANG 2 -->
+            <div class="journal-page-2" id="page-2-content">
+                <span class="typewriter-text">NỘI DUNG TRANG 2</span>
+            </div>
+        </div>
+        
+        <!-- KHUNG VIẾT HỒI ÂM DẠNG OVERLAY Ở GIỮA MÀN HÌNH -->
+        <div class="reply-box-wrapper" id="reply-container" onclick="closeReplyOnOuterClick(event)">
+            <div class="reply-box" id="reply-box-inner">
+                <h4>💌 Điều em muốn nói...</h4>
+                <form id="form" onsubmit="sendReplyDirectly(event)">
+                    <input type="hidden" name="access_key" value="xxxxxxxxxxxxxx">
+                    <input type="hidden" name="subject" value="💖 Cốc Cốc! Có tin nhắn từ người mình thương nè💖">
+                    
+                     <textarea id="reply-input" name="message" placeholder="Gửi anh những điều em giữ trong lòng bấy lâu nay nhá...." required></textarea>
+                    <br>
+                    <button type="submit" id="submit-btn">Gửi cho anh ✈️</button>
+                </form>
+                
+                <div class="success-area" id="success-area">
+                    <div class="success-msg">✨ Đã gửi thành công rồi nhé em yêu! 💖</div>
+                    <button class="back-letter-btn" onclick="backToLetter()">💌 Quay lại đọc thư của anh</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STICKER CẶP ĐÔI -->
+        <img src="couple.jpg.jpg" alt="Couple Sticker" class="couple-sticker" onerror="this.onerror=null; this.src='couple.jpg.jpg';">
+
+        <div class="right-section">
+            <div class="heart-grid">
+                <div class="polaroid-card img-1" onclick="openModal(0)"><img src="xxxxxx" alt="1"></div>
+                <div class="polaroid-card img-2" onclick="openModal(1)"><img src="xxxxxx" alt="2"></div>
+                <div class="polaroid-card img-3" onclick="openModal(2)"><img src="xxxxxx" alt="3"></div>
+                <div class="polaroid-card img-4" onclick="openModal(3)"><img src="xxxxxx" alt="4"></div>
+                <div class="polaroid-card img-5" onclick="openModal(4)"><img src="xxxxxx" alt="5"></div>
+                <div class="polaroid-card img-6" onclick="openModal(5)"><img src="xxxxxx" alt="6"></div>
+                <div class="polaroid-card img-7" onclick="openModal(6)"><img src="xxxxxx" alt="7"></div>
+                <div class="polaroid-card img-8" onclick="openModal(7)"><img src="xxxxxx" alt="8"></div>
+                <div class="polaroid-card img-9" onclick="openModal(8)"><img src="xxxxxx" alt="9"></div>
+                <div class="polaroid-card img-10" onclick="openModal(9)"><img src="xxxxxx" alt="10"></div>
+                <div class="polaroid-card img-11" onclick="openModal(10)"><img src="xxxxxx" alt="11"></div>
+                <div class="polaroid-card img-12" onclick="openModal(11)"><img src="xxxxxx" alt="12"></div>
+                <div class="polaroid-card img-13" onclick="openModal(12)"><img src="xxxxxx" alt="13"></div>
+                <div class="polaroid-card img-14" onclick="openModal(13)"><img src="xxxxxx" alt="14"></div>
+                <div class="polaroid-card img-15" onclick="openModal(14)"><img src="xxxxxx" alt="15"></div>
+                <div class="polaroid-card img-16" onclick="openModal(15)"><img src="xxxxxx" alt="16"></div>
+            </div>
+
+            <div class="time-counter-widget">
+                <div class="counter-boxes">
+                    <div class="box">
+                        <span class="num" id="years">1</span>    
+                        <span class="label">NĂM</span>
+                    </div>
+                    <div class="box">
+                        <span class="num" id="months">1</span>
+                        <span class="label">THÁNG</span>    
+                    </div>
+                    <div class="box">
+                        <span class="num" id="weeks">1</span>
+                        <span class="label">TUẦN</span>    
+                    </div>
+                    <div class="box">
+                        <span class="num" id="days">1</span>
+                        <span class="label">NGÀY</span>    
+                    </div>
+                </div>
+                <div class="hms-counter">
+                    <span class="start-date-tag">📌 1/1/1111</span>
+                    <span class="circle-num" id="hours">11</span> :
+                    <span class="circle-num" id="minutes">11</span> :
+                    <span class="circle-num" id="seconds">11</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CỤM ĐIỀU KHIỂN & NÚT PHẢN HỒI CỐ ĐỊNH GÓC DƯỚI BÊN TRÁI -->
+    <div class="bottom-left-controls">
+        <button class="hand-btn" onclick="switchPage(1)" title="Trang 1">👈</button>
+        <button class="music-btn" id="music-toggle" onclick="toggleMusic()">🎵 Bật nhạc</button>
+        <button class="hand-btn" onclick="switchPage(2)" title="Trang 2">👉</button>
+        
+        <!-- DÒNG PHẢN HỒI NẰM CẠNH CÁC NÚT ĐIỀU KHIỂN -->
+        <div class="reply-trigger-wrapper" id="reply-trigger-container">
+            <span class="reply-trigger-text" onclick="showReplyBox()">Phản hồi anh nhé... 💌</span>
+        </div>
+    </div>
+
+    <!-- MODAL HIỂN THỊ ẢNH PHÓNG TO -->
+    <div class="image-modal" id="imageModal" onclick="closeModalOnOuterClick(event)">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <span class="modal-nav modal-prev" onclick="changeImage(-1)">&#10094;</span>
+            <img class="modal-img" id="modalImg" src="" alt="Zoomed Image">
+            <span class="modal-nav modal-next" onclick="changeImage(1)">&#10095;</span>
+        </div>
+    </div>
+
+    <audio id="bg-music" loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        const SECRET_PASSWORD = "103208";
+        const fullText = "NỘI DUNG TRANG 1";
+        
+        const speed = 50; 
+        let index = 0;
+        const textElement = document.getElementById("typed-text");
+
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playKeyClickSound() {
+            try {
+                initAudio();
+                if (!audioCtx) return;
+
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+
+                const randomFreq = 800 + Math.random() * 400;
+                oscillator.type = 'triangle';
+                oscillator.frequency.setValueAtTime(randomFreq, audioCtx.currentTime);
+
+                gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.04);
+            } catch (e) {}
+        }
+
+        function checkPassword() {
+            const inputVal = document.getElementById("pass-input").value;
+            const errorMsg = document.getElementById("error-msg");
+            const passContainer = document.getElementById("password-container");
+
+            if (inputVal === SECRET_PASSWORD) {
+                passContainer.style.display = "none"; 
+                document.getElementById("typewriter-container").classList.add("active");
+                textElement.classList.add("typing");  
+                typeWriter();
+            } else {
+                errorMsg.style.display = "block";
+            }
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        }
+
+        function typeWriter() {
+            if (index < fullText.length) {
+                const char = fullText.charAt(index);
+                textElement.textContent += char;
+                
+                if (char.trim() !== "") {
+                    playKeyClickSound();
+                }
+
+                index++;
+                setTimeout(typeWriter, speed);
+            } else {
+                textElement.classList.remove("typing");
+                document.getElementById("reply-trigger-container").style.display = "block";
+            }
+        }
+
+        // --- HÀM CHUYỂN QUA LẠI GIỮA TRANG 1 VÀ TRANG 2 ---
+        function switchPage(pageNum) {
+            const page1Text = document.getElementById("typed-text");
+            const page2Content = document.getElementById("page-2-content");
+            const replyContainer = document.getElementById("reply-container");
+            const replyTrigger = document.getElementById("reply-trigger-container");
+
+            replyContainer.style.display = "none";
+
+            if (pageNum === 2) {
+                page1Text.style.display = "none";
+                page2Content.style.display = "block"; 
+                replyTrigger.style.display = "block"; 
+            } else {
+                page1Text.style.display = "block"; 
+                page2Content.style.display = "none";
+                replyTrigger.style.display = (index >= fullText.length) ? "block" : "none";
+            }
+        }
+
+        function showReplyBox() {
+            document.getElementById("reply-container").style.display = "flex"; 
+        }
+
+        function closeReplyOnOuterClick(event) {
+            if (event.target.id === "reply-container") {
+                document.getElementById("reply-container").style.display = "none";
+            }
+        }
+
+        // --- GỬI TRỰC TIẾP TỪ WEB VỀ EMAIL ---
+        function sendReplyDirectly(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById("submit-btn");
+            submitBtn.innerText = "Đang gửi đi... ✈️";
+            submitBtn.disabled = true;
+            const formElement = document.getElementById("form");
+            const formData = new FormData(formElement);
+            fetch("https://api.web3forms.com/submit", {
+                method: "POST",
+                body: formData
+            })
+            .then(async (response) => {
+                let json = await response.json();
+                if (response.status == 200) {
+                    document.getElementById("form").style.display = "none";
+                    document.getElementById("success-area").style.display = "block";
+                } else {
+                    alert(json.message);
+                    submitBtn.innerText = "Gửi cho anh ✈️";
+                    submitBtn.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                alert("Có lỗi xảy ra, bạn thử lại nhé!");
+                submitBtn.innerText = "Gửi cho anh ✈️";
+                submitBtn.disabled = false;
+            });
+        }
+
+        // --- HÀM QUAY LẠI ĐỌC THƯ ---
+        function backToLetter() {
+            document.getElementById("reply-container").style.display = "none"; 
+            document.getElementById("form").reset();
+            document.getElementById("form").style.display = "block";
+            document.getElementById("success-area").style.display = "none";
+            const submitBtn = document.getElementById("submit-btn");
+            submitBtn.innerText = "Gửi cho anh ✈️";
+            submitBtn.disabled = false;
+        }
+
+        const startDate = new Date(2024, 9, 2); 
+        function updateCounter() {
+            const now = new Date();
+            let years = now.getFullYear() - startDate.getFullYear();
+            let months = now.getMonth() - startDate.getMonth();
+            let days = now.getDate() - startDate.getDate();
+            if (days < 0) {
+                months -= 1;
+                const prevMonthDays = new Date(now.getFullYear(), now.getMonth(), 0).getDate();
+                days += prevMonthDays;
+            }
+            if (months < 0) {
+                years -= 1;
+                months += 12;
+            }
+
+            const weeks = Math.floor(days / 7);
+            const remainingDays = days % 7;
+
+            document.getElementById("years").innerText = years >= 0 ? years : 0;
+            document.getElementById("months").innerText = months >= 0 ? months : 0;
+            document.getElementById("weeks").innerText = weeks >= 0 ? weeks : 0;
+            document.getElementById("days").innerText = remainingDays >= 0 ? remainingDays : 0;
+            document.getElementById("hours").innerText = String(now.getHours()).padStart(2, '0');
+            document.getElementById("minutes").innerText = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById("seconds").innerText = String(now.getSeconds()).padStart(2, '0');
+        }
+        updateCounter();
+        setInterval(updateCounter, 1000);
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('falling-heart');
+            const hearts = ['♥', '💖', '💕', '💗', '🌸', '💗', '💞', '💕', '🌸','🌸'];
+            heart.innerText = hearts[Math.floor(Math.random() * hearts.length)];
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = (Math.random() * 12 + 10) + 'px';
+            const duration = Math.random() * 2 + 2;
+            heart.style.animationDuration = duration + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => { heart.remove(); }, duration * 1000);
+        }
+        setInterval(createHeart, 100);
+
+        const music = document.getElementById("bg-music");
+        const musicBtn = document.getElementById("music-toggle");
+        let isPlaying = false;
+
+        function toggleMusic() {
+            if (isPlaying) {
+                music.pause();
+                musicBtn.innerText = "🎵 Bật nhạc";
+            } else {
+                music.play().then(() => {
+                    musicBtn.innerText = "🎶 Tắt nhạc";
+                    isPlaying = true;
+                }).catch(e => console.log("Trình duyệt chờ tương tác"));
+            }
+            isPlaying = !isPlaying;
+        }
+
+        document.addEventListener('click', function unlockAudioOnce() {
+            if (!isPlaying) {
+                music.play().then(() => {
+                    isPlaying = true;
+                    musicBtn.innerText = "🎶 Tắt nhạc";
+                    document.removeEventListener('click', unlockAudioOnce);
+                }).catch(e => {});
+            }
+        }, { once: true });
+
+        const images = [
+            "xxxxxx.jpg", "xxxxxx.jpg", "xxxxxx.jpg", "xxxxxx.jpg",
+            "xxxxxx.jpg", "xxxxxx.jpg", "xxxxxx.jpg", "xxxxxx.jpg",
+            "xxxxxx.jpg", "xxxxxx.jpg", "xxxxxx.jpg", "xxxxxx.jpg",
+            "xxxxxx.jpg", "xxxxxx.jpg", "xxxxxx.jpg", "xxxxxx.jpg"
+        ];
+        let currentImgIndex = 0;
+
+        function openModal(index) {
+            currentImgIndex = index;
+            const modal = document.getElementById("imageModal");
+            const modalImg = document.getElementById("modalImg");
+            modalImg.src = images[currentImgIndex];
+            modal.classList.add("open");
+        }
+
+        function closeModal() {
+            document.getElementById("imageModal").classList.remove("open");
+        }
+
+        function changeImage(direction) {
+            currentImgIndex += direction;
+            if (currentImgIndex < 0) {
+                currentImgIndex = images.length - 1;
+            } else if (currentImgIndex >= images.length) {
+                currentImgIndex = 0;
+            }
+            document.getElementById("modalImg").src = images[currentImgIndex];
+        }
+
+        function closeModalOnOuterClick(event) {
+            if (event.target.id === "imageModal") {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
